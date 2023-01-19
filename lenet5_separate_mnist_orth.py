@@ -34,8 +34,7 @@ hidden_units1 = 125
 hidden_units2 = 256
 dropout = 0.2  # 0.45
 
-lam1 = 0
-lam2 = 0
+lam1 = 0.3
 
 
 
@@ -115,10 +114,13 @@ class ONI_Conv2d(Conv2D):
 
         self.WNScale = tf.constant(self.scale_, dtype=tf.float32)
 
+        self.diag_w = tf.Variable(np.random.randn(filters), dtype=tf.float32)
+
 
     def call(self, inputs):
         weight_q = self.weight_normalization(self.kernel)
-        weight_q = weight_q * self.WNScale
+        # weight_q = weight_q * self.WNScale
+        weight_q = weight_q * tf.tile(tf.reshape(self.diag_w, [1, 1, 1, -1]), [*weight_q.shape[0:3], 1])
         
         out = tf.nn.conv2d(inputs, weight_q, self.strides, self.padding)
         outputs = tf.nn.bias_add(out, self.bias)

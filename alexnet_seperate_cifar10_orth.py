@@ -41,30 +41,6 @@ weightclip = 0.125
 
 lam1 = 0.2
 
-class OrthCallback(Callback):
-    def on_epoch_end(self, epoch, logs=None):
-        sess = tf.compat.v1.Session()
-        weights = self.model.get_weights()
-               
-        shape1 = weights[0].shape  
-        shape2 = weights[2].shape
-        
-        self.weight_normalization = ONINorm(T=20, norm_groups=1)
-        weight_q = self.weight_normalization(tf.constant(weights[0]))
-        weight_q = weight_q * 1.414
-        
-        W1 = tf.reshape(weight_q, (-1, shape1[-1]))
-        print(sess.run(tf.transpose(W1) @ W1))
-        
-        W2 = weights[2].reshape((-1, shape2[-1]))
-#        print(W1.T @ W1)
-        
-        sig1 = tf.norm((tf.transpose(W1) @ W1 - tf.eye(shape1[-1])), 'fro')
-        sig2 = np.linalg.norm((W2.T @ W2 - np.eye(shape2[-1])), 'fro')
-        print(sig1)
-#        print(sig1, sig2)
-
-
 class ONINorm(Layer):
     def __init__(self, T=5, norm_groups=1, *args, **kwargs):
         super(ONINorm, self).__init__()
@@ -146,8 +122,8 @@ class ONI_Conv2d(Conv2D):
 
     def call(self, inputs):
         weight_q = self.weight_normalization(self.kernel)
-        weight_q = weight_q * self.WNScale
-#        weight_q=weight_q*tf.tile(tf.reshape(self.diag_w,[1,1,1,-1]),[*weight_q.shape[0:3],1])
+        # weight_q = weight_q * self.WNScale
+        weight_q=weight_q*tf.tile(tf.reshape(self.diag_w,[1,1,1,-1]),[*weight_q.shape[0:3],1])
         
         out = tf.nn.conv2d(inputs, weight_q, self.strides, self.padding)
         outputs = tf.nn.bias_add(out, self.bias)
@@ -399,7 +375,7 @@ if __name__ == '__main__':
         checkpoint = ModelCheckpoint(
             filepath=filepath, monitor='val_loss', mode='min', verbose=1, save_best_only=True, save_weights_only=True)
         lr_scheduler = LearningRateScheduler(lr_schedule)
-        orthcheck = OrthCallback()
+        # orthcheck = OrthCallback()
         lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                        cooldown=0,
                                        patience=5,
