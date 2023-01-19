@@ -43,7 +43,7 @@ learning_rate = 0.05
 lr_decay = 1e-6
 lr_drop = 20
 
-lam1 = 0
+lam1 = 0.2
 
 
 class ONINorm(Layer):
