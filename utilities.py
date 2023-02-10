@@ -99,3 +99,15 @@ def weight_prosessing(weight, resolution, rate):
             pweight.append(w)
 
     return pweight
+
+def weight_perturbation(weights, stddev, type):
+    for i, layer in enumerate(weights):
+        if i % 2 == 0:
+            noise = np.random.normal(loc=0.0, scale=stddev, size=layer.shape)
+        else:
+            continue
+        if type == 'awgn':
+            layer += noise
+        elif type == 'lognormal':
+            layer *= np.exp(noise)
+    model.set_weights(weights)
