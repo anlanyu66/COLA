@@ -1,5 +1,7 @@
-# COLA
-Example code for COLA: full COLA scheme (ECOC + TC + Sep + orth) for LeNet-5/MNIST, AlexNet/CIFAR10, VGG-16/CIFAR100, VGG-16/Tiny ImageNet
+# 🥤COLA: Orchestrating Error Coding and Learning for Robust Neural Network Inference Against Hardware Defects
+Example code for COLA: 
+
+full COLA scheme (ECOC + TC + Sep + orth) for LeNet-5/MNIST, AlexNet/CIFAR10, VGG-16/CIFAR100, VGG-16/Tiny ImageNet
 
 # Versions
 
